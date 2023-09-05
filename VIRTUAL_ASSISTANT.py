@@ -60,6 +60,6 @@ def alexa():
    elif 'rest' in command:
       talk("off to work rest time")
       
-talk("hello iam alexa, how can i help you")
+talk("hello iam alexa how can i help you")
 while True:
    alexa()
