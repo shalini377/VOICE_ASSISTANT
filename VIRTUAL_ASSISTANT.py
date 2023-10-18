@@ -4,6 +4,7 @@ import pywhatkit
 import wikipedia as wp
 import pyjokes
 from datetime import datetime
+import sys
 
 
 listener= sr.Recognizer()
@@ -15,22 +16,23 @@ def talk(text):
     engine.say(text)
     engine.runAndWait()
 
-
 def take_command():
-      try:
-        with sr.Microphone() as source:
-          print("waiting for your message...")
-          voice =listener.listen(source)
-          command =listener.recognize_google(voice)
-          command=command.lower()
-          if 'alexa' in command:
-             print(command)
-             command=command.replace('alexa','')
-      except:
-         print("sorry couldn't get you, Try again....")
-      return command
-
-
+    command = ""
+    with sr.Microphone() as source:
+        print("Waiting for your message...")
+        try:
+            audio = listener.listen(source, timeout=5)
+            command = listener.recognize_google(audio)
+            command = command.lower()
+            print("You said: {}".format(command))
+        except sr.WaitTimeoutError:
+            pass
+        except sr.UnknownValueError:
+            print("Google Speech Recognition could not recognize your audio")
+            talk("Google Speech Recognition could not recognize your audio")
+        except sr.RequestError as e:
+            print("Could not request results from Google Speech Recognition service; {0}".format(e))
+    return command
 def alexa():
    command=take_command()
    print(command)
@@ -48,18 +50,19 @@ def alexa():
       talk("today's date is"+ day)
    elif 'who is' in command:
       person=command.replace('who is','')
-      info=wp.summary(person,3)
+      info=wp.summary(person,2)
       print(info)
       talk(info)
    elif 'are you single' in command:
-      talk('no I am in relationship with wifi')
+      talk('no i am in relationship with wifi')
    elif 'joke' in command:
       jokes=pyjokes.get_joke()
       print(jokes)
       talk(jokes)
-   elif 'rest' in command:
-      talk("off to work rest time")
+   elif 'rest'in command:
+      talk("off to work,rest time")
+      sys.exit()
       
-talk("hello iam alexa how can i help you")
+talk("hai iam alexa how can i help you")
 while True:
    alexa()
